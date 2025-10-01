@@ -1,0 +1,6 @@
+@Homokozo.Data_HostAddress = http://localhost:5115
+
+GET {{Homokozo.Data_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

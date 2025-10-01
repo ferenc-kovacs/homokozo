@@ -1,0 +1,31 @@
+name: Build, Test
+
+on:
+  push:
+    branches:
+    - '**' # all branches
+  pull_request:
+    branches:
+    - '**' # all branches
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Run tests
+      run: dotnet test --configuration Release --verbosity normal
