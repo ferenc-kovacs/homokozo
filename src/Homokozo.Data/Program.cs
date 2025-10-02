@@ -4,6 +4,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddStorage(builder.Configuration);
+
+builder.Services.AddLogging();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -14,28 +19,28 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapGet("/user/{id:int}", async (int id, IUserService userService) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    var userResult = await userService.GetUser(new GetUserInput
+    {
+        Id = id
+    });
+    if (userResult.IsFailure)
+    {
+        // todo handle error
+        throw new Exception();
+    }
+    return userResult.Value;
+});
 
-app.MapGet("/weatherforecast", () =>
+app.MapPost("/user", async (CreateUserInput input, IUserService userService) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    var createUserResult = await userService.CreateUser(input);
+    if (createUserResult.IsFailure)
+    {
+        throw new Exception();
+    }
+    return createUserResult.Value;
+});
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

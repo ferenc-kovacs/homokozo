@@ -29,8 +29,9 @@ Okta
 ## Postgres
 
 Run `docker-compose up -d` in the root directory.
-Ensure the container is running `docker ps -a`
-Connect to postgres `docker exec -it 141bc0121fc7 psql -U user -d homokozo_db`
+Ensure the container is running: `docker ps -a`
+Connect to postgres: `docker exec -it 141bc0121fc7 psql -U user -d homokozo_db`
+Query users: `SELECT * FROM "Users";`
 
 ## EF
 
