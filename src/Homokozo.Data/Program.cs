@@ -16,6 +16,7 @@ builder.Services.AddLogging();
 const string SlidingPolicy = "SlidingPolicy";
 
 // TODO fix ratelimiting
+// https://learn.microsoft.com/en-us/aspnet/core/performance/rate-limit-samples?view=aspnetcore-9.0
 builder.Services.AddRateLimiter(options =>
 {
     options.OnRejected = (context, cancellationToken) =>
