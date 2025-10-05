@@ -1,3 +1,5 @@
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,8 +10,11 @@ builder.Services.AddStorage(builder.Configuration);
 
 builder.Services.AddLogging();
 
+builder.Services.AddRateLimiting(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseRateLimiter();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -31,7 +36,7 @@ app.MapGet("/user/{id:int}", async (int id, IUserService userService) =>
         throw new Exception();
     }
     return userResult.Value;
-});
+}).RequireRateLimiting(RateLimitingConfiguration.SlidingPolicy);
 
 app.MapPost("/user", async (CreateUserInput input, IUserService userService) =>
 {
@@ -41,6 +46,9 @@ app.MapPost("/user", async (CreateUserInput input, IUserService userService) =>
         throw new Exception();
     }
     return createUserResult.Value;
-});
+}).RequireRateLimiting(RateLimitingConfiguration.SlidingPolicy);
 
 app.Run();
+
+// minimal api testing trick
+public partial class Program { }
